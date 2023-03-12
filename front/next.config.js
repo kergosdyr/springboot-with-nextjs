@@ -2,7 +2,7 @@
 const nextConfig = {
     reactStrictMode: true,
     images: {
-        domains: ['lecture-1.vercel.app', 'search.pstatic.net'],
+        domains: ['springboot-with-nextjs.vercel.app', 'search.pstatic.net'],
     },
 };
 
