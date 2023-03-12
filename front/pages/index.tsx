@@ -1,34 +1,50 @@
-import Header from '@/components/section1/Header';
-import styles from 'styles/header.module.scss';
-import Link from 'next/link';
-import { AiOutlineShareAlt } from 'react-icons/ai';
-import { VscFeedback } from 'react-icons/vsc';
+import Header from '@/components/home/Header';
 import MapSection from '@/components/home/MapSection';
+import { Store } from '@/types/store';
+import { NextPage } from 'next';
+import useStores from '@/hooks/useStores';
+import { Fragment, useEffect } from 'react';
+import DetailSection from '@/components/home/DetailSection';
 
-export default function Home() {
+interface Props {
+    stores: Store[];
+}
+
+const Home: NextPage<Props> = ({ stores }) => {
+    const { initializeStores } = useStores();
+
+    useEffect(() => {
+        initializeStores(stores);
+    }, [initializeStores, stores]);
     return (
         <>
-            <Header
-                rightElements={[
-                    <button
-                        className={styles.box}
-                        style={{ marginRight: '10px' }}
-                        onClick={() => {
-                            alert('click!');
-                        }}
-                        key={'share'}
-                    >
-                        <AiOutlineShareAlt size={20} />
-                    </button>,
-                    <Link href="feedBack" className={styles.box} key="link">
-                        <VscFeedback size={20} />
-                    </Link>,
-                ]}
-            />
+            <Fragment>
+                <Header />
+            </Fragment>
 
-            <main style={{ width: '100%', height: '100%' }}>
+            <main
+                style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '100%',
+                    overflow: 'hidden',
+                }}
+            >
                 <MapSection />
+                <DetailSection />
             </main>
         </>
     );
+};
+
+export async function getStaticProps() {
+    /** TODO: next api routes로 불러오기 */
+    const stores = (await import('../public/stores.json')).default;
+
+    return {
+        props: { stores },
+        revalidate: 60 * 60,
+    };
 }
+
+export default Home;
