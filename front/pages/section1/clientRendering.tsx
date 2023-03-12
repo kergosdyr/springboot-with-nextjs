@@ -1,31 +1,34 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+
+const NoSSR = dynamic(() => import('@/components/section1/noSSR'), {
+    ssr: false,
+});
 
 const Tester = () => {
-  const [data, setData] = useState('');
+    const [data, setData] = useState('');
 
-  const fetchData = async () => {
+    const fetchData = async () => {
+        const res = await fetch('http://localhost:8080/next', {
+            method: 'POST',
+        });
+        return res.text();
+    };
 
-    const res = await fetch('http://localhost:8080/next', {method: 'POST'});
-    return res.text();
+    useEffect(() => {
+        fetchData().then((data) => {
+            setData(data);
+        });
+    }, []);
 
-  }
-
-
-  useEffect(() => {
-    fetchData().then((data) => {
-      setData(data);
-    });
-  }, []);
-
-  return (
-      <>
-        <h1>
-          UUID: {data}
-        </h1>
-      </>
-  );
-
-}
+    return (
+        <>
+            <h1>
+                <NoSSR />
+                UUID: {data}
+            </h1>
+        </>
+    );
+};
 
 export default Tester;
-
